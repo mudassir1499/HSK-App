@@ -15,4 +15,5 @@ urlpatterns = [
     path('grammar/', views.grammar_list, name='grammar_list'),
     path('grammar/level/<int:level>/', views.grammar_list, name='grammar_list_level'),
     path('grammar/<int:pk>/', views.grammar_detail, name='grammar_detail'),
+    path('stats/', views.stats_view, name='stats'),
 ]

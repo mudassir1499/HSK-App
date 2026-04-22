@@ -12,16 +12,26 @@
                     <th>Chinese</th>
                     <th>Pinyin</th>
                     <th>English</th>
+                    <th>Details</th>
                 </tr>
             </thead>
             <tbody>
-                {% for word in words %}
+                {% for item in word_data %}
                 <tr>
-                    <td>HSK {{ word.hsk_level }}</td>
-                    <td style="font-size: 1.2rem;">{{ word.chinese }}</td>
-                    <td>{{ word.pinyin }}</td>
-                    <td>{{ word.english }}</td>
-                    {# Optionally show difficulty if available #}
+                    <td>HSK {{ item.word.hsk_level }}</td>
+                    <td style="font-size: 1.2rem;">{{ item.word.chinese }}</td>
+                    <td>{{ item.word.pinyin }}</td>
+                    <td>{{ item.word.english }}</td>
+                    <td>
+                        {% if item.user_word %}
+                            <span style="font-size: 0.85rem;">
+                                {{ item.user_word.get_accuracy_emoji }} 
+                                {{ item.user_word.calculate_retention_rate }}%
+                            </span>
+                        {% endif %}
+                        {% if item.word.character_breakdown %}📝{% endif %}
+                        {% if item.word.example_sentences %}💬{% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
