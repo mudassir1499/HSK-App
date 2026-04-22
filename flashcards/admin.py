@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Word, UserWord, UserProfile, GrammarPoint
+from .models import Word, UserWord, UserProfile, GrammarPoint, Book, Chapter, TextSegment
 
 @admin.register(Word)
 class WordAdmin(admin.ModelAdmin):
@@ -41,3 +41,34 @@ class GrammarPointAdmin(admin.ModelAdmin):
     list_filter = ('level',)
     search_fields = ('title', 'explanation', 'example_cn')
     ordering = ('level', 'title')
+
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    list_display = ('title', 'hsk_level', 'get_chapter_count', 'created_at')
+    list_filter = ('hsk_level',)
+    search_fields = ('title', 'description')
+    ordering = ('hsk_level', 'title')
+
+@admin.register(Chapter)
+class ChapterAdmin(admin.ModelAdmin):
+    list_display = ('title', 'book', 'chapter_number', 'get_segment_count')
+    list_filter = ('book',)
+    search_fields = ('title', 'summary')
+    ordering = ('book', 'chapter_number')
+
+@admin.register(TextSegment)
+class TextSegmentAdmin(admin.ModelAdmin):
+    list_display = ('order', 'chapter', 'get_chinese_preview', 'has_audio')
+    list_filter = ('chapter',)
+    search_fields = ('chinese_text', 'pinyin', 'english_translation')
+    ordering = ('chapter', 'order')
+    filter_horizontal = ('key_words',)
+    
+    def get_chinese_preview(self, obj):
+        preview = obj.chinese_text[:50] + "..." if len(obj.chinese_text) > 50 else obj.chinese_text
+        return preview
+    get_chinese_preview.short_description = "Chinese Text"
+    
+    def has_audio(self, obj):
+        return "✓" if obj.audio_file else "✗"
+    has_audio.short_description = "Audio"

@@ -1,0 +1,161 @@
+[
+{
+  "model": "flashcards.book",
+  "pk": 1,
+  "fields": {
+    "title": "HSK Standard Course 1",
+    "hsk_level": 1,
+    "description": "Complete beginner course covering basic greetings, numbers, and everyday conversations.",
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+},
+{
+  "model": "flashcards.book",
+  "pk": 2,
+  "fields": {
+    "title": "HSK Standard Course 2",
+    "hsk_level": 2,
+    "description": "Elementary level course expanding vocabulary and introducing more complex sentence structures.",
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+},
+{
+  "model": "flashcards.book",
+  "pk": 3,
+  "fields": {
+    "title": "HSK Standard Course 3",
+    "hsk_level": 3,
+    "description": "Intermediate course for everyday communication in work and social situations.",
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+},
+{
+  "model": "flashcards.book",
+  "pk": 4,
+  "fields": {
+    "title": "HSK Standard Course 4",
+    "hsk_level": 4,
+    "description": "Upper-intermediate course covering abstract topics and fluent communication.",
+    "created_at": "2024-01-01T00:00:00Z"
+  }
+},
+{
+  "model": "flashcards.chapter",
+  "pk": 1,
+  "fields": {
+    "book": 1,
+    "chapter_number": 1,
+    "title": "Hello",
+    "summary": "Learn basic greetings and how to introduce yourself."
+  }
+},
+{
+  "model": "flashcards.chapter",
+  "pk": 2,
+  "fields": {
+    "book": 1,
+    "chapter_number": 2,
+    "title": "Thank You",
+    "summary": "Express gratitude and respond politely."
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 1,
+  "fields": {
+    "chapter": 1,
+    "order": 1,
+    "chinese_text": "你好！",
+    "pinyin": "Nǐ hǎo!",
+    "english_translation": "Hello!"
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 2,
+  "fields": {
+    "chapter": 1,
+    "order": 2,
+    "chinese_text": "你好吗？",
+    "pinyin": "Nǐ hǎo ma?",
+    "english_translation": "How are you?"
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 3,
+  "fields": {
+    "chapter": 1,
+    "order": 3,
+    "chinese_text": "我很好。",
+    "pinyin": "Wǒ hěn hǎo.",
+    "english_translation": "I'm very good."
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 4,
+  "fields": {
+    "chapter": 1,
+    "order": 4,
+    "chinese_text": "你叫什么名字？",
+    "pinyin": "Nǐ jiào shénme míngzi?",
+    "english_translation": "What's your name?"
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 5,
+  "fields": {
+    "chapter": 1,
+    "order": 5,
+    "chinese_text": "我叫李明。",
+    "pinyin": "Wǒ jiào Lǐ Míng.",
+    "english_translation": "My name is Li Ming."
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 6,
+  "fields": {
+    "chapter": 1,
+    "order": 6,
+    "chinese_text": "很高兴认识你。",
+    "pinyin": "Hěn gāoxìng rènshi nǐ.",
+    "english_translation": "Nice to meet you."
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 7,
+  "fields": {
+    "chapter": 2,
+    "order": 1,
+    "chinese_text": "谢谢！",
+    "pinyin": "Xièxie!",
+    "english_translation": "Thank you!"
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 8,
+  "fields": {
+    "chapter": 2,
+    "order": 2,
+    "chinese_text": "不客气。",
+    "pinyin": "Bú kèqi.",
+    "english_translation": "You're welcome."
+  }
+},
+{
+  "model": "flashcards.textsegment",
+  "pk": 9,
+  "fields": {
+    "chapter": 2,
+    "order": 3,
+    "chinese_text": "谢谢你帮助我。",
+    "pinyin": "Xièxie nǐ bāngzhù wǒ.",
+    "english_translation": "Thank you for helping me."
+  }
+}
+]

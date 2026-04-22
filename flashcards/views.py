@@ -265,3 +265,76 @@ def stats_view(request):
         }
     }
     return render(request, 'flashcards/stats.html', context)
+
+
+# Book & Reading Views
+def book_list(request):
+    """List all HSK books"""
+    from .models import Book
+    books = Book.objects.all().order_by('hsk_level', 'title')
+    return render(request, 'flashcards/book_list.html', {'books': books})
+
+
+def chapter_list(request, book_id):
+    """List chapters in a specific book"""
+    from .models import Book, Chapter
+    book = get_object_or_404(Book, pk=book_id)
+    chapters = Chapter.objects.filter(book=book).order_by('chapter_number')
+    return render(request, 'flashcards/chapter_list.html', {'book': book, 'chapters': chapters})
+
+
+def read_segment(request, segment_id):
+    """Read a text segment with TTS support"""
+    from .models import TextSegment, Chapter, Book
+    segment = get_object_or_404(TextSegment, pk=segment_id)
+    chapter = segment.chapter
+    book = chapter.book
+    
+    # Get navigation
+    prev_segment = TextSegment.objects.filter(chapter=chapter, order__lt=segment.order).order_by('-order').first()
+    next_segment = TextSegment.objects.filter(chapter=chapter, order__gt=segment.order).order_by('order').first()
+    
+    # If no prev/next in same chapter, check adjacent chapters
+    if not prev_segment:
+        prev_chapter = Chapter.objects.filter(book=book, chapter_number__lt=chapter.chapter_number).order_by('-chapter_number').first()
+        if prev_chapter:
+            prev_segment = TextSegment.objects.filter(chapter=prev_chapter).order_by('-order').first()
+    
+    if not next_segment:
+        next_chapter = Chapter.objects.filter(book=book, chapter_number__gt=chapter.chapter_number).order_by('chapter_number').first()
+        if next_chapter:
+            next_segment = TextSegment.objects.filter(chapter=next_chapter).order_by('order').first()
+    
+    context = {
+        'segment': segment,
+        'chapter': chapter,
+        'book': book,
+        'prev_segment': prev_segment,
+        'next_segment': next_segment,
+    }
+    return render(request, 'flashcards/read_segment.html', context)
+
+
+def text_to_speech(request):
+    """API endpoint for TTS - returns text info for browser TTS"""
+    from django.http import JsonResponse
+    from .models import TextSegment
+    
+    segment_id = request.GET.get('segment_id')
+    text = request.GET.get('text', '')
+    
+    if segment_id:
+        segment = get_object_or_404(TextSegment, pk=segment_id)
+        return JsonResponse({
+            'chinese': segment.chinese_text,
+            'pinyin': segment.pinyin,
+            'english': segment.english_translation,
+            'lang': 'zh-CN'
+        })
+    elif text:
+        return JsonResponse({
+            'text': text,
+            'lang': 'zh-CN'
+        })
+    
+    return JsonResponse({'error': 'No text provided'}, status=400)

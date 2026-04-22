@@ -1,0 +1,362 @@
+{% extends "flashcards/base.html" %}
+
+{% block content %}
+<div class="reading-container">
+    <div class="reading-header">
+        <a href="{% url 'chapter_list' book.id %}" class="back-link">← Back to {{ book.title }}</a>
+        <h2>{{ chapter.title }}</h2>
+        <p class="segment-info">Segment {{ segment.order }} of {{ chapter.get_segment_count }}</p>
+    </div>
+
+    <div class="reading-card">
+        <!-- Chinese Text with TTS -->
+        <div class="text-section chinese-section">
+            <div class="section-header">
+                <h3>🇨🇳 Chinese</h3>
+                <button class="tts-btn" onclick="speakText('{{ segment.chinese_text|escapejs }}', 'zh-CN')">
+                    🔊 Listen
+                </button>
+            </div>
+            <p class="chinese-text">{{ segment.chinese_text }}</p>
+        </div>
+
+        <!-- Pinyin -->
+        <div class="text-section pinyin-section">
+            <div class="section-header">
+                <h3>📝 Pinyin</h3>
+                <button class="tts-btn" onclick="speakText('{{ segment.pinyin|escapejs }}', 'zh-CN')">
+                    🔊 Listen
+                </button>
+            </div>
+            <p class="pinyin-text">{{ segment.pinyin }}</p>
+        </div>
+
+        <!-- English Translation -->
+        <div class="text-section english-section">
+            <h3>🇺🇸 English Translation</h3>
+            <p class="english-text">{{ segment.english_translation }}</p>
+        </div>
+
+        <!-- Key Vocabulary (if any) -->
+        {% if segment.key_words.all %}
+        <div class="vocabulary-section">
+            <h3>📚 Key Vocabulary</h3>
+            <div class="vocab-grid">
+                {% for word in segment.key_words.all %}
+                <div class="vocab-item">
+                    <span class="vocab-chinese">{{ word.chinese }}</span>
+                    <span class="vocab-pinyin">{{ word.pinyin }}</span>
+                    <span class="vocab-english">{{ word.english|truncatewords:5 }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+        {% if prev_segment %}
+        <a href="{% url 'read_segment' prev_segment.id %}" class="nav-btn prev">
+            ← Previous
+        </a>
+        {% else %}
+        <span class="nav-btn disabled">← Previous</span>
+        {% endif %}
+
+        <button class="nav-btn replay" onclick="replayAudio()">
+            🔁 Replay Audio
+        </button>
+
+        {% if next_segment %}
+        <a href="{% url 'read_segment' next_segment.id %}" class="nav-btn next">
+            Next →
+        </a>
+        {% else %}
+        <span class="nav-btn disabled">Next →</span>
+        {% endif %}
+    </div>
+
+    <!-- Keyboard shortcuts hint -->
+    <div class="keyboard-hints">
+        <p>⌨️ Shortcuts: <kbd>←</kbd> Previous | <kbd>Space</kbd> Play/Pause | <kbd>→</kbd> Next</p>
+    </div>
+</div>
+
+<style>
+.reading-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.back-link {
+    display: inline-block;
+    color: #667eea;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.reading-header h2 {
+    margin: 0.5rem 0;
+    color: #1a202c;
+}
+
+.segment-info {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.reading-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin: 1.5rem 0;
+}
+
+.text-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.text-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h3 {
+    margin: 0;
+    color: #1a202c;
+    font-size: 1.1rem;
+}
+
+.tts-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.tts-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+.tts-btn:active {
+    transform: scale(0.95);
+}
+
+.chinese-text {
+    font-size: 2rem;
+    color: #1a202c;
+    line-height: 1.6;
+    font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
+}
+
+.pinyin-text {
+    font-size: 1.5rem;
+    color: #667eea;
+    line-height: 1.6;
+    font-family: "Arial", sans-serif;
+}
+
+.english-text {
+    font-size: 1.2rem;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.vocabulary-section {
+    background: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+}
+
+.vocabulary-section h3 {
+    margin: 0 0 1rem 0;
+    color: #1a202c;
+}
+
+.vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.vocab-item {
+    background: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.vocab-chinese {
+    display: block;
+    font-size: 1.25rem;
+    color: #1a202c;
+    font-weight: bold;
+}
+
+.vocab-pinyin {
+    display: block;
+    font-size: 0.9rem;
+    color: #667eea;
+    margin: 0.25rem 0;
+}
+
+.vocab-english {
+    display: block;
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.nav-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    min-width: 120px;
+    transition: opacity 0.2s, transform 0.1s;
+    border: none;
+    cursor: pointer;
+}
+
+.nav-btn:hover:not(.disabled) {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+.nav-btn.disabled {
+    background: #e2e8f0;
+    color: #a0aec0;
+    cursor: not-allowed;
+}
+
+.nav-btn.replay {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.keyboard-hints {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #718096;
+    font-size: 0.85rem;
+}
+
+kbd {
+    background: #edf2f7;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #cbd5e0;
+    font-family: monospace;
+}
+
+@media (max-width: 768px) {
+    .chinese-text {
+        font-size: 1.5rem;
+    }
+    
+    .pinyin-text {
+        font-size: 1.2rem;
+    }
+    
+    .navigation {
+        flex-direction: column;
+    }
+    
+    .nav-btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+let currentUtterance = null;
+let isPaused = false;
+
+function speakText(text, lang) {
+    // Cancel any ongoing speech
+    if (currentUtterance) {
+        window.speechSynthesis.cancel();
+    }
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang || 'zh-CN';
+    utterance.rate = 0.8; // Slightly slower for learning
+    
+    // Try to find a Chinese voice
+    const voices = window.speechSynthesis.getVoices();
+    const chineseVoice = voices.find(voice => 
+        voice.lang.includes('zh') || voice.lang.includes('CN')
+    );
+    if (chineseVoice) {
+        utterance.voice = chineseVoice;
+    }
+    
+    currentUtterance = utterance;
+    isPaused = false;
+    window.speechSynthesis.speak(utterance);
+}
+
+function replayAudio() {
+    speakText('{{ segment.chinese_text|escapejs }}', 'zh-CN');
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    
+    if (e.key === 'ArrowLeft' && document.querySelector('.nav-btn.prev:not(.disabled)')) {
+        document.querySelector('.nav-btn.prev:not(.disabled)').click();
+    } else if (e.key === 'ArrowRight' && document.querySelector('.nav-btn.next:not(.disabled)')) {
+        document.querySelector('.nav-btn.next:not(.disabled)').click();
+    } else if (e.key === ' ') {
+        e.preventDefault();
+        if (isPaused) {
+            window.speechSynthesis.resume();
+            isPaused = false;
+        } else {
+            window.speechSynthesis.pause();
+            isPaused = true;
+        }
+    }
+});
+
+// Load voices when ready
+window.speechSynthesis.onvoiceschanged = function() {
+    window.speechSynthesis.getVoices();
+};
+</script>
+{% endblock %}

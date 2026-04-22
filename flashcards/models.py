@@ -251,3 +251,73 @@ class UserProfile(models.Model):
         if created:
             profile.reset_daily_goal()
         return profile
+
+
+class Book(models.Model):
+    """HSK Standard Course Books (1-6)"""
+    LEVEL_CHOICES = [(i, f"HSK {i}") for i in range(1, 7)]
+    
+    title = models.CharField(max_length=100)
+    hsk_level = models.IntegerField(choices=LEVEL_CHOICES)
+    description = models.TextField(blank=True, help_text="Description of the book content")
+    cover_image = models.ImageField(upload_to='book_covers/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['hsk_level', 'title']
+        verbose_name_plural = "Books"
+    
+    def __str__(self):
+        return f"{self.title} (HSK {self.hsk_level})"
+    
+    def get_chapter_count(self):
+        return self.chapters.count()
+    
+    def get_segment_count(self):
+        total = 0
+        for chapter in self.chapters.all():
+            total += chapter.segments.count()
+        return total
+
+
+class Chapter(models.Model):
+    """Chapters within a Book"""
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='chapters')
+    chapter_number = models.IntegerField(help_text="Chapter number (e.g., 1, 2, 3)")
+    title = models.CharField(max_length=200)
+    summary = models.TextField(blank=True, help_text="Brief summary of what this chapter covers")
+    
+    class Meta:
+        ordering = ['book', 'chapter_number']
+        unique_together = ['book', 'chapter_number']
+        verbose_name_plural = "Chapters"
+    
+    def __str__(self):
+        return f"Chapter {self.chapter_number}: {self.title}"
+    
+    def get_segment_count(self):
+        return self.segments.count()
+
+
+class TextSegment(models.Model):
+    """Individual sentences or paragraphs within a Chapter with TTS support"""
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE, related_name='segments')
+    order = models.IntegerField(help_text="Order of appearance in the chapter")
+    
+    chinese_text = models.TextField(help_text="Chinese characters (Simplified)")
+    pinyin = models.TextField(help_text="Pinyin with tone marks")
+    english_translation = models.TextField(help_text="English translation")
+    
+    # Optional audio file if pre-recorded (otherwise uses browser TTS)
+    audio_file = models.FileField(upload_to='chapter_audio/', blank=True, null=True)
+    
+    # Word associations (optional - links to vocabulary in this segment)
+    key_words = models.ManyToManyField('Word', blank=True, help_text="Key vocabulary words in this segment")
+    
+    class Meta:
+        ordering = ['chapter', 'order']
+        verbose_name_plural = "Text Segments"
+    
+    def __str__(self):
+        preview = self.chinese_text[:30] + "..." if len(self.chinese_text) > 30 else self.chinese_text
+        return f"Segment {self.order}: {preview}"

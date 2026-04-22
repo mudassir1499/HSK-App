@@ -1,0 +1,124 @@
+{% extends "flashcards/base.html" %}
+
+{% block content %}
+<div class="dashboard-header">
+    <a href="{% url 'book_list' %}" class="back-link">← Back to Books</a>
+    <h2>📖 {{ book.title }}</h2>
+    <p class="subtitle">HSK {{ book.hsk_level }} - Select a chapter to begin reading</p>
+</div>
+
+<div class="chapters-list">
+    {% for chapter in chapters %}
+    <div class="chapter-card">
+        <div class="chapter-header">
+            <h3>Chapter {{ chapter.chapter_number }}: {{ chapter.title }}</h3>
+            <span class="segment-count">{{ chapter.get_segment_count }} segments</span>
+        </div>
+        {% if chapter.summary %}
+        <p class="chapter-summary">{{ chapter.summary }}</p>
+        {% endif %}
+        
+        {% if chapter.segments.count > 0 %}
+        <a href="{% url 'read_segment' chapter.segments.first.id %}" class="btn btn-primary">
+            Start Reading Chapter {{ chapter.chapter_number }}
+        </a>
+        {% else %}
+        <p class="no-content">No content added yet</p>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <h3>No Chapters Yet</h3>
+        <p>This book doesn't have any chapters. Add chapters through Django Admin.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.back-link {
+    display: inline-block;
+    color: #667eea;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.subtitle {
+    color: #718096;
+    font-size: 1rem;
+}
+
+.chapters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 0;
+}
+
+.chapter-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.chapter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.chapter-header h3 {
+    margin: 0;
+    color: #1a202c;
+    font-size: 1.25rem;
+}
+
+.segment-count {
+    background: #edf2f7;
+    color: #4a5568;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.chapter-summary {
+    color: #4a5568;
+    margin: 1rem 0;
+    line-height: 1.6;
+}
+
+.btn-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+.no-content {
+    color: #a0aec0;
+    font-style: italic;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}
