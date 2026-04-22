@@ -1,0 +1,28 @@
+{% extends 'flashcards/base.html' %}
+{% block content %}
+<div class="glass-panel">
+    <h2>Chinese Grammar Points{% if level %} - HSK {{ level }}{% endif %}</h2>
+    <div style="margin-bottom:1rem;">
+        <a href="{% url 'grammar_list' %}" class="btn">All Levels</a>
+        <a href="{% url 'grammar_list_level' 1 %}" class="btn">HSK 1</a>
+        <a href="{% url 'grammar_list_level' 2 %}" class="btn">HSK 2</a>
+        <a href="{% url 'grammar_list_level' 3 %}" class="btn">HSK 3</a>
+        <a href="{% url 'grammar_list_level' 4 %}" class="btn">HSK 4</a>
+    </div>
+    {% if grammar_points %}
+    <ul>
+        {% for gp in grammar_points %}
+        <li style="margin-bottom:1rem;">
+            <a href="{% url 'grammar_detail' gp.pk %}"><strong>{{ gp.title }}</strong></a>
+            <span style="color:#888;">(HSK {{ gp.level }})</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No grammar points found for this level.</p>
+    {% endif %}
+    <div style="margin-top:2rem;">
+        <a href="{% url 'dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

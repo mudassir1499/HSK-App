@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env*
+*.sqlite3
+*.db
+
+# Django
+*.log
+staticfiles/
+media/
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Migrations
+*/migrations/*
+!*/migrations/__init__.py
+
+# Fixtures
+*.json
+!flashcards/fixtures/grammarpoints.json

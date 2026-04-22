@@ -1,0 +1,42 @@
+{% extends 'flashcards/base.html' %}
+{% block content %}
+<div class="glass-panel">
+    <h2>{{ difficulty_label }} Words</h2>
+    {% if user_words %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>Chinese</th>
+                    <th>Pinyin</th>
+                    <th>English</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for uw in user_words %}
+                <tr>
+                    <td>HSK {{ uw.word.hsk_level }}</td>
+                    <td style="font-size: 1.2rem;">{{ uw.word.chinese }}</td>
+                    <td>{{ uw.word.pinyin }}</td>
+                    <td>{{ uw.word.english }}</td>
+                    <td>{{ uw.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>No {{ difficulty_label|lower }} words found.</p>
+    {% endif %}
+    <div style="margin-top:2rem;">
+        {% if difficulty_label == 'Hard' %}
+            <a href="{% url 'study_hard_words' %}" class="btn" style="background:#f59e0b;">Study Hard Flashcards</a>
+        {% elif difficulty_label == 'Easy' %}
+            <a href="{% url 'study_easy_words' %}" class="btn" style="background:#10b981;">Study Easy Flashcards</a>
+        {% endif %}
+        <a href="{% url 'dashboard' %}" class="btn">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'flashcards/base.html' %}
+{% block content %}
+<div class="glass-panel">
+    <h2>Complete HSK Vocabulary List</h2>
+    <p>Browse all words from HSK levels 1 through 4.</p>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Level</th>
+                    <th>Chinese</th>
+                    <th>Pinyin</th>
+                    <th>English</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for word in words %}
+                <tr>
+                    <td>HSK {{ word.hsk_level }}</td>
+                    <td style="font-size: 1.2rem;">{{ word.chinese }}</td>
+                    <td>{{ word.pinyin }}</td>
+                    <td>{{ word.english }}</td>
+                    {# Optionally show difficulty if available #}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

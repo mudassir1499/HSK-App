@@ -1,0 +1,66 @@
+{% extends 'flashcards/base.html' %}
+{% block content %}
+<div style="text-align: center;">
+    {% if card %}
+        <h2>Study Session {% if level %}- HSK {{ level }}{% endif %}</h2>
+        <p>Click the card to reveal the translation</p>
+        
+        <div class="card-scene">
+            <div class="card" id="flashcard">
+                <div class="card-face card-front">
+                    <div class="chinese">{{ card.word.chinese }}</div>
+                    <button id="play-audio-btn" class="btn" style="margin-top:1rem;" type="button">🔊 Play Audio</button>
+                </div>
+                <div class="card-face card-back">
+                    <div class="pinyin">{{ card.word.pinyin }}</div>
+                    <div class="english">{{ card.word.english }}</div>
+                    <div class="difficulty-label" style="margin-top:1rem;">
+                        <strong>Difficulty:</strong> {{ card.difficulty|title }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="study-actions" id="study-actions">
+            <!-- 3 buttons representing the new SRS states -->
+            <a href="{% url 'review_action' card.id 'forgotten' %}" class="btn btn-danger">Forgot it</a>
+            <a href="{% url 'review_action' card.id 'hard' %}" class="btn" style="background-color: #f59e0b; color: #fff;">Hard (Repeat Soon)</a>
+            <a href="{% url 'review_action' card.id 'remembered' %}" class="btn btn-success">Easy (Remembered)</a>
+        </div>
+        
+    {% else %}
+        <div class="glass-panel">
+            <h2>You're all caught up!</h2>
+            <p>There are no words due for review right now in {% if level %}HSK {{ level }}{% else %}this section{% endif %}. Great job!</p>
+            <br>
+            <a href="{% url 'dashboard' %}" class="btn">Back to Dashboard</a>
+            <br><br>
+            <p>If you haven't started yet, make sure to Initialize your user dictionary on the dashboard.</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    const flashcard = document.getElementById('flashcard');
+    const actions = document.getElementById('study-actions');
+    const playAudioBtn = document.getElementById('play-audio-btn');
+
+    if (flashcard) {
+        flashcard.addEventListener('click', () => {
+            flashcard.classList.toggle('is-flipped');
+            if (flashcard.classList.contains('is-flipped')) {
+                actions.classList.add('show');
+            }
+        });
+    }
+
+    if (playAudioBtn) {
+        playAudioBtn.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent flipping the card
+            const utterance = new SpeechSynthesisUtterance("{{ card.word.chinese }}");
+            utterance.lang = 'zh-CN';
+            window.speechSynthesis.speak(utterance);
+        });
+    }
+</script>
+{% endblock %}
