@@ -7,6 +7,60 @@
     <title>HSK Flashcards</title>
     <meta name="description" content="Master HSK Vocabulary with our innovative Spaced Repetition Flashcard App.">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        /* Enhanced card styling for detailed learning content */
+        .learning-section {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card-back {
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem !important;
+        }
+        
+        .card-back::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .card-back::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+        
+        .card-back::-webkit-scrollbar-thumb {
+            background: rgba(167, 139, 250, 0.5);
+            border-radius: 3px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-scene {
+                max-width: 95%;
+            }
+            
+            .chinese {
+                font-size: 2.5rem !important;
+            }
+            
+            .pinyin {
+                font-size: 1.3rem !important;
+            }
+            
+            .learning-section h4 {
+                font-size: 0.9rem !important;
+            }
+            
+            .learning-section p {
+                font-size: 0.85rem !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -17,6 +71,8 @@
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             <li><a href="{% url 'study_session' %}">Study Now</a></li>
             <li><a href="{% url 'word_list' %}">Vocabulary List</a></li>
+            <li><a href="{% url 'grammar_list' %}">Grammar</a></li>
+            <li><a href="{% url 'book_list' %}">Books</a></li>
         </ul>
     </nav>
     <div class="container">

@@ -15,4 +15,11 @@ urlpatterns = [
     path('grammar/', views.grammar_list, name='grammar_list'),
     path('grammar/level/<int:level>/', views.grammar_list, name='grammar_list_level'),
     path('grammar/<int:pk>/', views.grammar_detail, name='grammar_detail'),
+    path('stats/', views.stats_view, name='stats'),
+    
+    # Book & Reading section URLs
+    path('books/', views.book_list, name='book_list'),
+    path('book/<int:book_id>/', views.chapter_list, name='chapter_list'),
+    path('read/<int:segment_id>/', views.read_segment, name='read_segment'),
+    path('api/tts/', views.text_to_speech, name='text_to_speech'),
 ]

@@ -1,29 +1,15 @@
+```
 # Python
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
 *.pyd
-*.env
-.env*
-*.sqlite3
-*.db
+
+# Database
+db.sqlite3
 
 # Django
 *.log
-staticfiles/
-media/
-
-# VSCode
-.vscode/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Migrations
-*/migrations/*
-!*/migrations/__init__.py
-
-# Fixtures
-*.json
-!flashcards/fixtures/grammarpoints.json
+local_settings.py
+.env
+```

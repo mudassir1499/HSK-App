@@ -2,11 +2,63 @@
 {% block content %}
 <div>
     {% if total_words %}
-        <h2 style="text-align: center; margin-bottom:0.5rem;">Your Learning Dashboard</h2>
-        <p style="text-align: center; margin-bottom: 2rem;">Select an HSK Level to study, or track your progress.</p>
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <h2 style="margin-bottom:0.5rem;">📚 Your Learning Dashboard</h2>
+            <p>Select an HSK Level to study, or track your progress.</p>
+        </div>
         
+        <!-- Daily Goal & Streak Section -->
+        <div class="glass-panel" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem;">
+            <div style="text-align: center; min-width: 200px;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔥</div>
+                <h3 style="color: #f59e0b; font-size: 2rem; margin-bottom: 0.25rem;">{{ profile.current_streak }}</h3>
+                <p style="margin: 0;">Day Streak</p>
+                <small style="opacity: 0.6;">Longest: {{ profile.longest_streak }} days</small>
+            </div>
+            
+            <div style="text-align: center; min-width: 200px;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎯</div>
+                <h3 style="color: #10b981; font-size: 2rem; margin-bottom: 0.25rem;">{{ profile.words_studied_today }}/{{ profile.daily_goal }}</h3>
+                <p style="margin: 0;">Daily Goal</p>
+                <div style="width: 150px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin: 0.5rem auto; overflow: hidden;">
+                    <div style="width: {{ stats.goal_progress }}%; background: linear-gradient(90deg, #10b981, #34d399); height: 100%;"></div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; min-width: 200px;">
+                <div style="font-size: 3rem; margin-bottom: 0.5rem;">📊</div>
+                <h3 style="color: #a78bfa; font-size: 2rem; margin-bottom: 0.25rem;">{{ stats.avg_accuracy }}%</h3>
+                <p style="margin: 0;">Avg Accuracy</p>
+                <small style="opacity: 0.6;">Last 7 days: {{ stats.recent_reviews }} reviews</small>
+            </div>
+        </div>
+        
+        <!-- Overall Stats Summary -->
+        <div class="glass-panel" style="text-align: center;">
+            <h3 style="color: #f472b6; margin-bottom: 1rem;">Overall Progress</h3>
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3 style="color: #ef4444;">{{ stats.total_due }}</h3>
+                    <p>Pending Reviews</p>
+                </div>
+                <div class="stat-card">
+                    <h3 style="color: #f59e0b;">{{ stats.total_learning }}</h3>
+                    <p>Learning</p>
+                </div>
+                <div class="stat-card">
+                    <h3 style="color: #10b981;">{{ stats.total_mastered }}</h3>
+                    <p>Mastered</p>
+                </div>
+                <div class="stat-card">
+                    <h3 style="color: #a78bfa;">{{ stats.total_new }}</h3>
+                    <p>New Words</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- HSK Levels -->
         {% for level in levels %}
-            <div class="glass-panel" style="margin-top: 1rem;">
+            <div class="glass-panel">
                 <h3 style="text-align:center; color:#f472b6;">HSK Level {{ level.level }}</h3>
                 <div class="dashboard-grid">
                     <div class="stat-card">
@@ -31,21 +83,27 @@
                 </div>
             </div>
         {% endfor %}
+        
+        <!-- Quick Actions -->
         <div class="glass-panel" style="text-align: center; margin-top: 2rem;">
-            <a href="{% url 'grammar_list' %}" class="btn" style="background:#6366f1;">Chinese Grammar (HSK 1-4)</a>
-            <p>Want to mix it up?</p>
-            <a href="{% url 'study_session' %}" class="btn" style="background:#f472b6;">Study All Levels</a>
-            <br><br>
-            <a href="{% url 'hard_words' %}" class="btn" style="background:#f59e0b;">Review Hard Words</a>
-            <a href="{% url 'study_hard_words' %}" class="btn" style="background:#f59e0b;">Study Hard Flashcards</a>
-            <a href="{% url 'easy_words' %}" class="btn" style="background:#10b981;">Review Easy Words</a>
-            <a href="{% url 'study_easy_words' %}" class="btn" style="background:#10b981;">Study Easy Flashcards</a>
-            <br><br>
-            <p style="font-size:0.8rem; opacity:0.6;">(Or <a href="{% url 'init_user_words' %}" style="color:var(--primary);">re-initialize database</a> if missing words)</p>
+            <h3 style="margin-bottom: 1rem;">📖 Study Options</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;">
+                <a href="{% url 'grammar_list' %}" class="btn" style="background:#6366f1;">Chinese Grammar (HSK 1-4)</a>
+                <a href="{% url 'study_session' %}" class="btn" style="background:#f472b6;">Study All Levels</a>
+                <a href="{% url 'hard_words' %}" class="btn" style="background:#f59e0b;">Review Hard Words</a>
+                <a href="{% url 'study_hard_words' %}" class="btn" style="background:#f59e0b;">Study Hard Flashcards</a>
+                <a href="{% url 'easy_words' %}" class="btn" style="background:#10b981;">Review Easy Words</a>
+                <a href="{% url 'word_list' %}" class="btn" style="background:#64748b;">Vocabulary List</a>
+            </div>
+            <br>
+            <p style="font-size:0.8rem; opacity:0.6;">
+                Or <a href="{% url 'init_user_words' %}" style="color:var(--primary);">re-initialize database</a> if missing words
+            </p>
         </div>
+        
     {% else %}
         <div class="glass-panel" style="text-align: center; margin-top: 2rem;">
-            <h3>Database Empty</h3>
+            <h3>📭 Database Empty</h3>
             <p>Please run the import command to load words.</p>
         </div>
     {% endif %}
